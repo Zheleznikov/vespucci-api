@@ -1,0 +1,32 @@
+{
+  "name": "vespucci-api",
+  "version": "1.0.0",
+  "description": "backend of the diploma in Yandex.Praktikum",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "debug": "node app.js --inspect"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zheleznikov/vespucci-api.git"
+  },
+  "keywords": [
+    "explorer",
+    "news"
+  ],
+  "author": "Sergey Zheleznikov <polwen@yandex.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zheleznikov/vespucci-api/issues"
+  },
+  "homepage": "https://github.com/Zheleznikov/vespucci-api#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.10"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  }
+}
