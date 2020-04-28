@@ -4,6 +4,9 @@
      "eol-last" : "off",
      "no-console": "off",
      "object-curly-newline": "off",
-     "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+     "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+     "eslint-disable-next-line": "off",
+     "eslint-disable0": "off",
+     "eslint-disable-line": "off"
    }
 }
