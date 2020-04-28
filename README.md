@@ -3,6 +3,7 @@
  - https://api.vespucci.tk/
  - http://api.vespucci.tk/
  - 84.201.167.7
+ - https://vespucci.tk/
  
  ### Стек
  - express;
