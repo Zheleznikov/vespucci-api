@@ -1,4 +1,4 @@
-## vespucci-api
+# vespucci-api
 Бэкенд для поисковика новостей - дипломная работа в Яндекс.Практикуме
  - https://api.vespucci.tk/
  - http://api.vespucci.tk/
