@@ -35,7 +35,7 @@ module.exports.deleteArticle = (req, res, next) => {
         });
     })
     .catch((err) => {
-      NODE_ENV === 'production' ? next(new NotFoundError('Нет такой статьи'))
+      NODE_ENV === 'production' ? next(new NotFoundError('Что-то не так со статьей'))
         : next(new NotFoundError(`${err.message}`));
     });
 };

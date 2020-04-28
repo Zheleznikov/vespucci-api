@@ -11,7 +11,6 @@ const NotFoundError = require('../errors/notFoundError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-
 // создать пользователя
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
