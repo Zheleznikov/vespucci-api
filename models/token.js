@@ -1,4 +1,3 @@
-/* eslint-disable func-names */
 const mongoose = require('mongoose');
 
 const tokenSchema = new mongoose.Schema({
@@ -7,7 +6,7 @@ const tokenSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    expires: '604800s',
+    expires: '7d',
     default: Date.now,
   },
 });

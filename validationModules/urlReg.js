@@ -1,4 +1,4 @@
-// для валидации ссылок пользуюсь регулярным выражением https://github.com/hapijs/joi/issues/162
+// https://github.com/hapijs/joi/issues/162
 // Regular Expression for URL validation
 //
 // Author: Diego Perini
