@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -5,8 +6,11 @@ const User = require('../models/user');
 const Token = require('../models/token');
 
 const UnauthorizedError = require('../errors/unauthorizedError');
+const BadRequestError = require('../errors/badRequestError');
+const NotFoundError = require('../errors/notFoundError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
+
 
 // создать пользователя
 module.exports.createUser = (req, res, next) => {
@@ -17,13 +21,12 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-      res.status(201).send({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      });
+      res.status(201).send({ message: 'Congratulate', user: { _id: user._id, name: user.name, email: user.email } });
     })
-    .catch((err) => next(new Error(`Данные не прошли валидацию: ${err.message}`))); // error
+    .catch((err) => {
+      NODE_ENV === 'production' ? next(new BadRequestError('Данные не прошли валидацию'))
+        : next(new BadRequestError(`${err.message}`));
+    });
 };
 
 // залогиниться
@@ -32,13 +35,13 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user.email) {
-        throw new Error('Такого пользователя нет');
+        throw new UnauthorizedError('Такого пользователя нет');
       }
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.send({ token });
+      res.send({ message: 'Congratulate', token, user: { _id: user._id, name: user.name, email: user.email, articles: user.articles } });
     })
-    .catch((err) => next(new UnauthorizedError(`Неудачная авторизация: ${err.message}`)));
+    .catch((err) => next(new UnauthorizedError(`${err.message}`)));
 };
 
 // разлогиниться
@@ -50,12 +53,12 @@ module.exports.logout = (req, res, next) => {
       })
         .then(() => res.send({ message: 'Успешный выход' }));
     })
-    .catch((err) => next(new Error(`Упс ${err.message}`)));
+    .catch((err) => next(new UnauthorizedError(`${err.message}`)));
 };
 
-// получить данные пользователя
+// получить данные о себе
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
-    .catch(next);
+    .catch((err) => next(new NotFoundError(`${err.message}`)));
 };

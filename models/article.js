@@ -29,21 +29,22 @@ const articleSchema = new mongoose.Schema({
       validator: (url) => validate.isURL(url),
       message: 'Неправильный формат ссылки',
     },
-    image: {
-      type: String,
-      required: true,
-      validate: {
-        validator: (url) => validate.isURL(url),
-        message: 'Неправильный формат ссылки',
-      },
+  },
+  image: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (url) => validate.isURL(url),
+      message: 'Неправильный формат ссылки',
     },
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'user',
-      select: false,
-    },
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'user',
+    select: false,
   },
 });
 
-module.exports = mongoose.Schema('article', articleSchema);
+
+module.exports = mongoose.model('article', articleSchema);

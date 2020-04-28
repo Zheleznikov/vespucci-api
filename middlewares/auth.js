@@ -26,5 +26,5 @@ module.exports = (req, res, next) => {
         return res.status(401).send({ message: 'Необходима авторизация' });
       }
     })
-    .catch(() => console.log('не нашли'));
+    .catch((err) => next(err));
 };

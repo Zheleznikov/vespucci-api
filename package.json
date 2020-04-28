@@ -4,8 +4,8 @@
   "description": "backend of the diploma in Yandex.Praktikum",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "cross-env NODE_ENV=production node app.js",
+    "dev": "cross-env NODE_ENV=develop JWT_SECRET=dev_secret nodemon app.js",
     "debug": "node app.js --inspect"
   },
   "repository": {
@@ -25,8 +25,9 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.5",
+    "celebrate": "^12.1.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^3.22.0",
