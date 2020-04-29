@@ -14,12 +14,9 @@ module.exports.createArticle = (req, res, next) => {
     .then((article) => {
       User.findByIdAndUpdate(req.user._id, { $addToSet: { articles: article } }, { new: true })
         .then(() => res.status(201).send({ data: article }))
-        .catch((err) => next({ message: err.message }));
+        .catch(next);
     })
-    .catch((err) => {
-      NODE_ENV === 'production' ? next(new BadRequestError('Что-то не так со статьей'))
-        : next({ message: err.message });
-    });
+    .catch((err) => (NODE_ENV === 'production' ? next(new BadRequestError('Что-то не так со статьей')) : next(new BadRequestError(`${err.message}`))));
 };
 
 // удалить статью
@@ -33,13 +30,10 @@ module.exports.deleteArticle = (req, res, next) => {
         .then((data) => {
           User.findByIdAndUpdate(req.user._id, { $pull: { articles: article._id } }, { new: true })
             .then(() => res.send({ message: 'Эта статья была удалена', data }))
-            .catch((err) => next({ message: err.message }));
+            .catch(next);
         });
     })
-    .catch((err) => {
-      NODE_ENV === 'production' ? next(new NotFoundError('Что-то не так со статьей'))
-        : next({ message: err.message });
-    });
+    .catch((err) => (NODE_ENV === 'production' ? next(new NotFoundError('Что-то не так со статьей')) : next(new NotFoundError(`${err.message}`))));
 };
 
 // получить список всех статей статей
@@ -47,5 +41,5 @@ module.exports.getArticles = (req, res, next) => {
   Article.find({})
     .populate({ path: 'owner', model: User })
     .then((articles) => res.send({ data: articles }))
-    .catch((err) => next({ message: err.message }));
+    .catch(next);
 };

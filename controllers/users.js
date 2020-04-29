@@ -1,4 +1,3 @@
-/* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-expressions */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
@@ -20,10 +19,7 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => res.status(201).send({ message: 'Congratulate', data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } }))
-    .catch((err) => {
-      NODE_ENV === 'production' ? next(new BadRequestError('Данные не прошли валидацию')) :
-        next({ message: err.message });
-    });
+    .catch((err) => (NODE_ENV === 'production' ? next(new BadRequestError('email занят')) : next(new BadRequestError(`${err.message}`))));
 };
 
 // залогиниться
@@ -37,33 +33,23 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ message: 'Congratulate', token, data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } });
     })
-    .catch((err) => {
-      NODE_ENV === 'production' ? next(new UnauthorizedError('Данные не прошли валидацию')) :
-        next({ message: err.message });
-    });
+    .catch((err) => (NODE_ENV === 'production' ? next(new UnauthorizedError('Неправильная почта или пароль')) : next(new UnauthorizedError(`${err.message}`))));
 };
 
 // разлогиниться
 module.exports.logout = (req, res, next) => {
   User.findById(req.user._id)
     .then(() => {
-      Token.create({
-        token: req.headers.authorization,
-      })
-        .then(() => res.send({ message: 'Успешный выход' }));
+      Token.create({ token: req.headers.authorization })
+        .then(() => res.send({ message: 'Успешный выход' }))
+        .catch(next);
     })
-    .catch((err) => {
-      NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) :
-        next({ message: err.message });
-    });
+    .catch((err) => (NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) : next(new UnauthorizedError(`${err.message}`))));
 };
 
 // получить данные о себе
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) :
-        next({ message: err.message });
-    });
+    .catch((err) => (NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) : next(new UnauthorizedError(`${err.message}`))));
 };
