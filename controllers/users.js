@@ -58,6 +58,6 @@ module.exports.logout = (req, res, next) => {
 // получить данные о себе
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({ message: 'Congratulate', data: user }))
     .catch((err) => (NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) : next(new UnauthorizedError(`${err.message}`))));
 };
