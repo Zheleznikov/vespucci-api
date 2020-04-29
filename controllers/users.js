@@ -33,7 +33,15 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ message: 'Congratulate', token, data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } });
     })
-    .catch((err) => (NODE_ENV === 'production' ? next(new UnauthorizedError('Неправильная почта или пароль')) : next(new UnauthorizedError(`${err.message}`))));
+    .catch((err) => {
+      NODE_ENV === 'production' ? next(new UnauthorizedError('Неправильная почта или пароль')) : next(new UnauthorizedError(`${err.message}`));
+      console.log(req.headers.authorization);
+      if (req.headers.authorization !== undefined) {
+        Token.create({ token: req.headers.authorization })
+          .then(() => console.log('предыдущий ключ добавлен в блеклист'))
+          .catch(next);
+      }
+    });
 };
 
 // разлогиниться
