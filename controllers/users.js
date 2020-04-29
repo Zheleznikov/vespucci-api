@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable no-unused-expressions */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
@@ -7,7 +8,6 @@ const Token = require('../models/token');
 
 const UnauthorizedError = require('../errors/unauthorizedError');
 const BadRequestError = require('../errors/badRequestError');
-const NotFoundError = require('../errors/notFoundError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -19,12 +19,10 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => {
-      res.status(201).send({ message: 'Congratulate', user: { _id: user._id, name: user.name, email: user.email } });
-    })
+    .then((user) => res.status(201).send({ message: 'Congratulate', data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } }))
     .catch((err) => {
-      NODE_ENV === 'production' ? next(new BadRequestError('Данные не прошли валидацию'))
-        : next(new BadRequestError(`${err.message}`));
+      NODE_ENV === 'production' ? next(new BadRequestError('Данные не прошли валидацию')) :
+        next({ message: err.message });
     });
 };
 
@@ -36,11 +34,13 @@ module.exports.login = (req, res, next) => {
       if (!user.email) {
         throw new UnauthorizedError('Такого пользователя нет');
       }
-      const token = jwt.sign({ _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.send({ message: 'Congratulate', token, user: { _id: user._id, name: user.name, email: user.email, articles: user.articles } });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+      res.send({ message: 'Congratulate', token, data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } });
     })
-    .catch((err) => next(new UnauthorizedError(`${err.message}`)));
+    .catch((err) => {
+      NODE_ENV === 'production' ? next(new UnauthorizedError('Данные не прошли валидацию')) :
+        next({ message: err.message });
+    });
 };
 
 // разлогиниться
@@ -52,12 +52,18 @@ module.exports.logout = (req, res, next) => {
       })
         .then(() => res.send({ message: 'Успешный выход' }));
     })
-    .catch((err) => next(new UnauthorizedError(`${err.message}`)));
+    .catch((err) => {
+      NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) :
+        next({ message: err.message });
+    });
 };
 
 // получить данные о себе
 module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
-    .catch((err) => next(new NotFoundError(`${err.message}`)));
+    .catch((err) => {
+      NODE_ENV === 'production' ? next(new UnauthorizedError('Что-то не получилось')) :
+        next({ message: err.message });
+    });
 };
