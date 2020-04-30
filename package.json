@@ -1,0 +1,48 @@
+{
+  "name": "vespucci-api",
+  "version": "1.0.0",
+  "description": "backend of the diploma in Yandex.Praktikum",
+  "main": "app.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node app.js",
+    "dev": "cross-env NODE_ENV=develop JWT_SECRET=dev_secret nodemon app.js",
+    "debug": "node app.js --inspect"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zheleznikov/vespucci-api.git"
+  },
+  "keywords": [
+    "explorer",
+    "news"
+  ],
+  "author": "Sergey Zheleznikov <polwen@yandex.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zheleznikov/vespucci-api/issues"
+  },
+  "homepage": "https://github.com/Zheleznikov/vespucci-api#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "celebrate": "^12.1.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.1.1",
+    "express-winston": "^4.0.3",
+    "helmet": "^3.22.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.10",
+    "mongoose-unique-validator": "^2.0.3",
+    "validator": "^13.0.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "nodemon": "^2.0.3"
+  }
+}
