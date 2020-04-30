@@ -7,4 +7,5 @@ router.get('/users/me', celebrate({
     id: Joi.string().alphanum().length(24),
   }),
 }), getUser);
+
 module.exports = router;

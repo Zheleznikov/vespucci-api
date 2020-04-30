@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -6,7 +5,7 @@ const User = require('../models/user');
 const Token = require('../models/token');
 
 const UnauthorizedError = require('../errors/unauthorizedError');
-const BadRequestError = require('../errors/badRequestError');
+const ConflictError = require('../errors/conflictError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -18,8 +17,16 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash,
     }))
-    .then((user) => res.status(201).send({ message: 'Congratulate', data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } }))
-    .catch((err) => (NODE_ENV === 'production' ? next(new BadRequestError('email занят')) : next(new BadRequestError(`${err.message}`))));
+    .then((user) => res.status(201).send({
+      message: 'Congratulate',
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        articles: user.articles,
+      },
+    }))
+    .catch((err) => (NODE_ENV === 'production' ? next(new ConflictError('email занят')) : next(new ConflictError(`${err.message}`))));
 };
 
 // залогиниться
@@ -31,15 +38,27 @@ module.exports.login = (req, res, next) => {
         throw new UnauthorizedError('Такого пользователя нет');
       }
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.send({ message: 'Congratulate', token, data: { _id: user._id, name: user.name, email: user.email, articles: user.articles } });
+      res.send({
+        message: 'Congratulate',
+        token,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          articles: user.articles,
+        },
+      });
     })
     .catch((err) => {
-      NODE_ENV === 'production' ? next(new UnauthorizedError('Неправильная почта или пароль')) : next(new UnauthorizedError(`${err.message}`));
-      console.log(req.headers.authorization);
       if (req.headers.authorization !== undefined) {
         Token.create({ token: req.headers.authorization })
-          .then(() => console.log('предыдущий ключ добавлен в блеклист'))
+          .then(next)
           .catch(next);
+      }
+      if (NODE_ENV === 'production') {
+        next(new UnauthorizedError('Неправильная почта или пароль'));
+      } else {
+        next(new UnauthorizedError(`${err.message}`));
       }
     });
 };

@@ -13,8 +13,6 @@ const router = require('./routes/index');
 const errorsHandler = require('./middlewares/errorsHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { NODE_ENV } = process.env;
-
 const app = express();
 
 app.use(rateLimit(config.RATE_LIMIT));
@@ -33,7 +31,7 @@ mongoose.connect(config.CONNECTION_ADDRESS, {
 app.use(requestLogger);
 app.use('/', router);
 app.use(errorLogger);
-app.use((NODE_ENV === 'production' ? errorsHandler : errors()));
+app.use(errors());
 app.use(errorsHandler);
 
 app.listen(config.PORT, () => console.log(`App listening on port ${config.PORT}`));

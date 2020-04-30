@@ -1,16 +1,31 @@
-/* eslint-disable no-unused-expressions */
 const Article = require('../models/article');
 const User = require('../models/user');
 const ForbiddenError = require('../errors/forbiddenError');
-const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
 
 const { NODE_ENV } = process.env;
 
 // создать статью
 module.exports.createArticle = (req, res, next) => {
-  const { keyword, title, text, date, source, link, image } = req.body;
-  Article.create({ keyword, title, text, date, source, link, image, owner: req.user._id })
+  const {
+    keyword,
+    title,
+    text,
+    date,
+    source,
+    link,
+    image,
+  } = req.body;
+  Article.create({
+    keyword,
+    title,
+    text,
+    date,
+    source,
+    link,
+    image,
+    owner: req.user._id,
+  })
     .then((article) => {
       User.findByIdAndUpdate(req.user._id, { $addToSet: { articles: article } }, { new: true })
         .then(() => res.status(201).send({ data: article }))
@@ -24,7 +39,7 @@ module.exports.deleteArticle = (req, res, next) => {
   Article.findById(req.params.articleId).select('+owner')
     .then((article) => {
       if (String(article.owner) !== req.user._id) {
-        throw new ForbiddenError('Нельзя удалить эту статью потому что ее может удалить только владелец');
+        throw new BadRequestError('Нельзя удалить эту статью потому что ее может удалить только владелец');
       }
       article.remove()
         .then((data) => {
@@ -33,7 +48,7 @@ module.exports.deleteArticle = (req, res, next) => {
             .catch(next);
         });
     })
-    .catch((err) => (NODE_ENV === 'production' ? next(new NotFoundError('Что-то не так со статьей')) : next(new NotFoundError(`${err.message}`))));
+    .catch((err) => (NODE_ENV === 'production' ? next(new ForbiddenError('Что-то не так со статьей')) : next(new ForbiddenError(`Нет статьи с таким id ${err.message}`))));
 };
 
 // получить список всех статей статей
