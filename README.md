@@ -1,9 +1,8 @@
 # vespucci-api
 Бэкенд для поисковика новостей - дипломная работа в Яндекс.Практикуме
- - https://api.vespucci.tk/
- - http://api.vespucci.tk/
- - 84.201.167.7
- - Прикольная заглушка https://vespucci.tk/
+-  http://api.vespucci-explorer.ru/
+ - 81.177.141.59
+ 
  
  ### Стек
  - express;
