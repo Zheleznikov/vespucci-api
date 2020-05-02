@@ -8,7 +8,7 @@ const NotFoundError = require('../errors/notFoundError');
 
 const { NODE_ENV } = process.env;
 
-const userSchema = new mongoose.Schema({
+const userVespucciSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   }],
 });
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+userVespucciSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
@@ -54,6 +54,6 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
         });
     });
 };
-userSchema.plugin(uniqueValidator);
+userVespucciSchema.plugin(uniqueValidator);
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = mongoose.model('userVespucci', userVespucciSchema);

@@ -1,5 +1,6 @@
+/* eslint-disable max-len */
 const Article = require('../models/article');
-const User = require('../models/user');
+const UserVespucci = require('../models/user');
 const ForbiddenError = require('../errors/forbiddenError');
 const BadRequestError = require('../errors/badRequestError');
 
@@ -27,7 +28,7 @@ module.exports.createArticle = (req, res, next) => {
     owner: req.user._id,
   })
     .then((article) => {
-      User.findByIdAndUpdate(req.user._id, { $addToSet: { articles: article } }, { new: true })
+      UserVespucci.findByIdAndUpdate(req.user._id, { $addToSet: { articles: article } }, { new: true })
         .then(() => res.status(201).send({ data: article }))
         .catch(next);
     })
@@ -43,7 +44,7 @@ module.exports.deleteArticle = (req, res, next) => {
       }
       article.remove()
         .then((data) => {
-          User.findByIdAndUpdate(req.user._id, { $pull: { articles: article._id } }, { new: true })
+          UserVespucci.findByIdAndUpdate(req.user._id, { $pull: { articles: article._id } }, { new: true })
             .then(() => res.send({ message: 'Эта статья была удалена', data }))
             .catch(next);
         });
@@ -54,7 +55,7 @@ module.exports.deleteArticle = (req, res, next) => {
 // получить список всех статей статей
 module.exports.getArticles = (req, res, next) => {
   Article.find({})
-    .populate({ path: 'owner', model: User })
+    .populate({ path: 'owner', model: UserVespucci })
     .then((articles) => res.send({ data: articles }))
     .catch(next);
 };
