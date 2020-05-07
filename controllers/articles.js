@@ -54,7 +54,7 @@ module.exports.deleteArticle = (req, res, next) => {
 
 // получить список всех статей статей
 module.exports.getArticles = (req, res, next) => {
-  Article.find({})
+  Article.find({ owner: req.user._id })
     .populate({ path: 'owner', model: UserVespucci })
     .then((articles) => res.send({ data: articles }))
     .catch(next);
